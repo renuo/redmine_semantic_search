@@ -14,7 +14,8 @@ require_dependency "redmine_semantic_search/hooks/view_hooks"
 Redmine::Plugin.register :redmine_semantic_search do
   name "Semantic Search"
   author "Sami Hindi @ Renuo"
-  description "This redmine plugin allows you to search issues using natural language, by storing the issue content in a vector database."
+  description "This redmine plugin allows you to search issues using natural language, " \
+              "by storing the issue content in a vector database."
   version "0.0.1"
   url "https://github.com/renuo/redmine_semantic_search"
   author_url "https://github.com/renuo"
@@ -31,7 +32,7 @@ Redmine::Plugin.register :redmine_semantic_search do
        caption: :label_redmine_semantic_search,
        if: Proc.new {
          user = User.current
-         Setting.plugin_redmine_semantic_search['enabled'] == '1' &&
+         Setting.plugin_redmine_semantic_search["enabled"] == "1" &&
            user.logged? &&
            user.allowed_to?(:use_semantic_search, nil, global: true)
        }
