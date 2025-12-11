@@ -40,7 +40,8 @@ echo "Changed directory to ${REDMINE_ROOT}"
 
 echo "Ensuring Redmine gems are installed (running bundle install)..."
 bundle check || bundle install
-bundle exec rake db:create db:migrate db:seed redmine:load_default_data
+bundle exec rake db:create db:migrate db:seed redmine:load_default_data REDMINE_LANG=en
+bundle exec rake redmine:plugins:migrate
 
 RAKE_TASK="redmine_semantic_search:setup_dev_data"
 RAILS_ENV="${RAILS_ENV:-development}"
