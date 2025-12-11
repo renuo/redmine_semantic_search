@@ -141,12 +141,7 @@ To quickly populate your Redmine instance with sample projects and issues for te
     cd path/to/your/redmine/plugins/redmine_semantic_search
     ```
 
-3.  **Make the script executable (if you haven't already):**
-    ```bash
-    chmod +x bin/setup
-    ```
-
-4.  **Run the setup script:**
+3.  **Run the setup script:**
     You must specify the `RAILS_ENV` (it defaults to `development`). Next, run this command:
     ```bash
     RAILS_ENV=production ./bin/setup
