@@ -87,12 +87,16 @@ class EmbeddingServiceTest < ActiveSupport::TestCase
 
     Journal.where(journalized: issue).delete_all
     Journal.connection.execute(
-      "INSERT INTO journals (journalized_id, journalized_type, user_id, notes, created_on) VALUES (#{issue.id}, 'Issue', 2, 'Test comment', '#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}')"
+      "INSERT INTO journals (journalized_id, journalized_type, user_id, notes, created_on) " \
+      "VALUES (#{issue.id}, 'Issue', 2, 'Test comment', '#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}')"
     )
 
     TimeEntry.where(issue_id: issue.id).delete_all
     TimeEntry.connection.execute(
-      "INSERT INTO time_entries (project_id, user_id, issue_id, hours, activity_id, spent_on, comments, tyear, tmonth, tweek, created_on, updated_on) VALUES (#{issue.project_id}, 2, #{issue.id}, 1, 9, '#{Date.today.strftime('%Y-%m-%d')}', 'Test time entry comment', #{Date.today.year}, #{Date.today.month}, #{Date.today.cweek}, '#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}', '#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}')"
+      "INSERT INTO time_entries (project_id, user_id, issue_id, hours, activity_id, spent_on, " \
+      "comments, tyear, tmonth, tweek, created_on, updated_on) VALUES (#{issue.project_id}, 2, #{issue.id}, 1, 9, " \
+      "'#{Date.today.strftime('%Y-%m-%d')}', 'Test time entry comment', #{Date.today.year}, #{Date.today.month}, " \
+      "#{Date.today.cweek}, '#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}', '#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}')"
     )
 
     issue.reload

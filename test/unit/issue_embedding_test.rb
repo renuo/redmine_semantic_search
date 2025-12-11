@@ -131,7 +131,8 @@ class IssueEmbeddingTest < ActiveSupport::TestCase
     issue.priority_id = default_priority.id
 
     if issue.project
-      default_category = issue.project.issue_categories.first || issue.project.issue_categories.create!(name: "Default Category")
+      default_category = issue.project.issue_categories.first ||
+                         issue.project.issue_categories.create!(name: "Default Category")
       issue.category_id = default_category.id
     end
 
