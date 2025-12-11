@@ -1,9 +1,6 @@
 AllCops:
   NewCops: enable
   TargetRubyVersion: 3.2
-  Include:
-    - "app/**/*.rb"
-    - "Gemfile"
   Exclude:
     - "db/**/*"
     - "bin/**/*"
