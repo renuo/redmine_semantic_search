@@ -2,6 +2,7 @@ require File.expand_path("../test_helper", __dir__)
 
 class RedmineSemanticSearchTest < Redmine::IntegrationTest
   include LoginHelpers::Integration
+
   fixtures :projects, :users, :roles, :members, :member_roles, :issues, :trackers
 
   def setup

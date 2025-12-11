@@ -3,6 +3,7 @@ require File.expand_path("../test_helper", __dir__)
 class IssueCreationWithEmbeddingTest < Redmine::IntegrationTest
   include ActiveJob::TestHelper
   include LoginHelpers::Integration
+
   fixtures :projects, :users, :roles, :members, :member_roles, :trackers, :issue_statuses
 
   def setup

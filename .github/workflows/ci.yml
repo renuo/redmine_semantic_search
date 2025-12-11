@@ -16,16 +16,10 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.2"
-
-      - name: Install dependencies
-        run: |
-          gem install rubocop rubocop-rails rubocop-performance
+          bundler-cache: true
 
       - name: Run linter
-        run: |
-          chmod +x bin/lint
-          bin/lint
+        run: bin/lint
 
   syntax:
     runs-on: ubuntu-latest

@@ -2,6 +2,7 @@ require File.expand_path("../test_helper", __dir__)
 
 class IssueHooksTest < ActiveSupport::TestCase
   include ActiveJob::TestHelper
+
   fixtures :projects, :users, :issues, :journals, :time_entries
 
   def setup

@@ -6,7 +6,7 @@
 set -e
 
 echo "Running Rubocop linter..."
-rubocop --ignore-parent-exclusion --force-exclusion $@
+bundle exec rubocop --ignore-parent-exclusion --force-exclusion $@
 
 exit_code=$?
 

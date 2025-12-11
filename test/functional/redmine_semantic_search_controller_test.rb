@@ -3,6 +3,7 @@ require File.expand_path("../test_helper", __dir__)
 class RedmineSemanticSearchControllerTest < Redmine::ControllerTest
   include ActiveJob::TestHelper
   include ApplicationHelper
+
   fixtures :projects, :users, :roles, :members, :member_roles, :issues, :trackers
 
   def setup

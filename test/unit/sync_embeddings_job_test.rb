@@ -2,6 +2,7 @@ require File.expand_path("../test_helper", __dir__)
 
 class SyncEmbeddingsJobTest < ActiveSupport::TestCase
   include ActiveJob::TestHelper
+
   fixtures :projects, :users, :issues
 
   def setup
