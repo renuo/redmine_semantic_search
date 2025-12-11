@@ -14,14 +14,14 @@ module RedmineSemanticSearch
 
     def controller_journals_edit_post(context = {})
       journal = context[:journal]
-      if journal.present? && journal.journalized_type == 'Issue' && plugin_enabled?
+      if journal.present? && journal.journalized_type == "Issue" && plugin_enabled?
         schedule_embedding_job(journal.journalized_id)
       end
     end
 
     def controller_journals_new_after_save(context = {})
       journal = context[:journal]
-      if journal.present? && journal.journalized_type == 'Issue' && plugin_enabled?
+      if journal.present? && journal.journalized_type == "Issue" && plugin_enabled?
         schedule_embedding_job(journal.journalized_id)
       end
     end
