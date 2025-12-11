@@ -1,4 +1,4 @@
-require File.expand_path('../../test_helper', __FILE__)
+require File.expand_path("../test_helper", __dir__)
 
 class IssueHooksTest < ActiveSupport::TestCase
   include ActiveJob::TestHelper
@@ -33,7 +33,7 @@ class IssueHooksTest < ActiveSupport::TestCase
     end
     clear_enqueued_jobs
 
-    journal = Journal.new(journalized: @issue, journalized_type: 'Issue', user_id: 1, notes: 'Test comment')
+    journal = Journal.new(journalized: @issue, journalized_type: "Issue", user_id: 1, notes: "Test comment")
     journal.save
     assert_enqueued_with(job: IssueEmbeddingJob, args: [@issue.id]) do
       @issue_hooks.controller_journals_new_after_save(journal: journal)
@@ -52,7 +52,7 @@ class IssueHooksTest < ActiveSupport::TestCase
       spent_on: Date.today,
       activity_id: 9,
       project_id: @issue.project_id,
-      comments: 'Test time entry comment'
+      comments: "Test time entry comment"
     )
     assert_enqueued_with(job: IssueEmbeddingJob, args: [@issue.id]) do
       @issue_hooks.controller_timelog_edit_after_save(time_entry: time_entry)
@@ -77,7 +77,7 @@ class IssueHooksTest < ActiveSupport::TestCase
       @issue_hooks.controller_issues_edit_after_save(issue: @issue)
     end
 
-    journal = Journal.new(journalized: @issue, journalized_type: 'Issue', user_id: 1, notes: 'Test comment')
+    journal = Journal.new(journalized: @issue, journalized_type: "Issue", user_id: 1, notes: "Test comment")
     journal.save
     assert_no_enqueued_jobs do
       @issue_hooks.controller_journals_new_after_save(journal: journal)
@@ -94,7 +94,7 @@ class IssueHooksTest < ActiveSupport::TestCase
       spent_on: Date.today,
       activity_id: 9,
       project_id: @issue.project_id,
-      comments: 'Test time entry comment'
+      comments: "Test time entry comment"
     )
     assert_no_enqueued_jobs do
       @issue_hooks.controller_timelog_edit_after_save(time_entry: time_entry)

@@ -6,11 +6,14 @@ AllCops:
     - "bin/**/*"
     - "config/**/*"
     - "script/**/*"
-    - "test/**/*"
     - "vendor/**/*"
 
 Metrics:
   Enabled: false
+
+Naming/VariableNumber:
+  CheckMethodNames: false
+  CheckSymbols: false
 
 Style/Documentation:
   Enabled: false

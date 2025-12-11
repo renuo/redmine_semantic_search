@@ -1,4 +1,4 @@
-require File.expand_path('../../test_helper', __FILE__)
+require File.expand_path("../test_helper", __dir__)
 
 class IssueEmbeddingTest < ActiveSupport::TestCase
   fixtures :projects, :users, :issues, :journals, :time_entries
@@ -8,8 +8,8 @@ class IssueEmbeddingTest < ActiveSupport::TestCase
     @embedding = IssueEmbedding.new(
       issue: @issue,
       embedding_vector: [0.1] * 2000,
-      content_hash: 'test_hash',
-      model_used: 'text-embedding-ada-002'
+      content_hash: "test_hash",
+      model_used: "text-embedding-ada-002"
     )
   end
 
@@ -22,17 +22,17 @@ class IssueEmbeddingTest < ActiveSupport::TestCase
 
     @embedding.issue = nil
     assert_not @embedding.valid?
-    assert_includes @embedding.errors[:issue], 'cannot be blank'
+    assert_includes @embedding.errors[:issue], "cannot be blank"
 
     @embedding.issue = @issue
     @embedding.embedding_vector = nil
     assert_not @embedding.valid?
-    assert_includes @embedding.errors[:embedding_vector], 'cannot be blank'
+    assert_includes @embedding.errors[:embedding_vector], "cannot be blank"
 
     @embedding.embedding_vector = [0.1] * 2000
     @embedding.content_hash = nil
     assert_not @embedding.valid?
-    assert_includes @embedding.errors[:content_hash], 'cannot be blank'
+    assert_includes @embedding.errors[:content_hash], "cannot be blank"
   end
 
   def test_calculate_content_hash_all_variations
@@ -40,29 +40,33 @@ class IssueEmbeddingTest < ActiveSupport::TestCase
     issue.journals.destroy_all
     issue.time_entries.destroy_all
 
-    issue_subject = 'Subject for hash calculation with variations'
-    issue_description = 'Description for hash calculation with variations'
+    issue_subject = "Subject for hash calculation with variations"
+    issue_description = "Description for hash calculation with variations"
     issue.update_columns(
       subject: issue_subject,
       description: issue_description
     )
 
-    journal_note1 = 'First journal note present.'
-    journal_note2 = 'Second journal note present.'
+    journal_note1 = "First journal note present."
+    journal_note2 = "Second journal note present."
     Journal.create!(journalized: issue, user_id: User.find(2).id, notes: nil) # Should be skipped by .present?
     Journal.create!(journalized: issue, user_id: User.find(2).id, notes: journal_note1)
-    Journal.create!(journalized: issue, user_id: User.find(2).id, notes: '') # Should be skipped by .present?
+    Journal.create!(journalized: issue, user_id: User.find(2).id, notes: "") # Should be skipped by .present?
     Journal.create!(journalized: issue, user_id: User.find(2).id, notes: journal_note2)
 
-    time_comment1 = 'First time entry comment present.'
-    time_comment2 = 'Second time entry comment present.'
+    time_comment1 = "First time entry comment present."
+    time_comment2 = "Second time entry comment present."
     activity_id = TimeEntryActivity.find(9).id
     project_id = issue.project_id
 
-    TimeEntry.create!(issue: issue, user_id: User.find(2).id, hours: 1, spent_on: Date.today, activity_id: activity_id, project_id: project_id, comments: nil)
-    TimeEntry.create!(issue: issue, user_id: User.find(2).id, hours: 1, spent_on: Date.today, activity_id: activity_id, project_id: project_id, comments: time_comment1)
-    TimeEntry.create!(issue: issue, user_id: User.find(2).id, hours: 1, spent_on: Date.today, activity_id: activity_id, project_id: project_id, comments: '')
-    TimeEntry.create!(issue: issue, user_id: User.find(2).id, hours: 1, spent_on: Date.today, activity_id: activity_id, project_id: project_id, comments: time_comment2)
+    TimeEntry.create!(issue: issue, user_id: User.find(2).id, hours: 1, spent_on: Date.today, activity_id: activity_id,
+                      project_id: project_id, comments: nil)
+    TimeEntry.create!(issue: issue, user_id: User.find(2).id, hours: 1, spent_on: Date.today, activity_id: activity_id,
+                      project_id: project_id, comments: time_comment1)
+    TimeEntry.create!(issue: issue, user_id: User.find(2).id, hours: 1, spent_on: Date.today, activity_id: activity_id,
+                      project_id: project_id, comments: "")
+    TimeEntry.create!(issue: issue, user_id: User.find(2).id, hours: 1, spent_on: Date.today, activity_id: activity_id,
+                      project_id: project_id, comments: time_comment2)
 
     issue.reload
 
@@ -84,13 +88,13 @@ class IssueEmbeddingTest < ActiveSupport::TestCase
 
   def test_calculate_content_hash_with_no_journals_or_time_entries
     project = Project.find(1)
-    tracker = Tracker.first || Tracker.create(name: 'Test Tracker', default_status_id: IssueStatus.first.id)
+    tracker = Tracker.first || Tracker.create(name: "Test Tracker", default_status_id: IssueStatus.first.id)
     author = User.find(1)
-    status = IssueStatus.first || IssueStatus.create(name: 'New')
-    priority = IssuePriority.first || IssuePriority.create(name: 'Normal')
+    status = IssueStatus.first || IssueStatus.create(name: "New")
+    priority = IssuePriority.first || IssuePriority.create(name: "Normal")
 
-    issue_subject = 'Subject for no journals/time entries'
-    issue_description = 'Description for no journals/time entries'
+    issue_subject = "Subject for no journals/time entries"
+    issue_description = "Description for no journals/time entries"
 
     issue = Issue.create!(
       project: project,
@@ -123,11 +127,11 @@ class IssueEmbeddingTest < ActiveSupport::TestCase
   def test_needs_update
     issue = Issue.find(1)
 
-    default_priority = IssuePriority.find_by(name: 'Normal') || IssuePriority.create!(name: 'Normal', position: 1)
+    default_priority = IssuePriority.find_by(name: "Normal") || IssuePriority.create!(name: "Normal", position: 1)
     issue.priority_id = default_priority.id
 
     if issue.project
-      default_category = issue.project.issue_categories.first || issue.project.issue_categories.create!(name: 'Default Category')
+      default_category = issue.project.issue_categories.first || issue.project.issue_categories.create!(name: "Default Category")
       issue.category_id = default_category.id
     end
 
@@ -136,12 +140,12 @@ class IssueEmbeddingTest < ActiveSupport::TestCase
       issue: issue,
       embedding_vector: [0.1] * 2000,
       content_hash: current_hash,
-      model_used: 'text-embedding-ada-002'
+      model_used: "text-embedding-ada-002"
     )
 
     assert_not embedding.needs_update?(issue)
 
-    issue.update!(subject: 'Updated subject')
+    issue.update!(subject: "Updated subject")
 
     assert embedding.needs_update?(issue)
   end

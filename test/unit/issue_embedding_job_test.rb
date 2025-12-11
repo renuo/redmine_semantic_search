@@ -1,4 +1,4 @@
-require File.expand_path('../../test_helper', __FILE__)
+require File.expand_path("../test_helper", __dir__)
 
 class IssueEmbeddingJobTest < ActiveSupport::TestCase
   fixtures :projects, :users, :issues
@@ -50,7 +50,7 @@ class IssueEmbeddingJobTest < ActiveSupport::TestCase
       issue_id: @issue.id,
       embedding_vector: [0.1] * 2000,
       content_hash: content_hash,
-      model_used: 'text-embedding-ada-002'
+      model_used: "text-embedding-ada-002"
     )
 
     job = IssueEmbeddingJob.new

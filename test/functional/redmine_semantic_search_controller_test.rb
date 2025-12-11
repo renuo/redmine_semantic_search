@@ -1,4 +1,4 @@
-require File.expand_path('../../test_helper', __FILE__)
+require File.expand_path("../test_helper", __dir__)
 
 class RedmineSemanticSearchControllerTest < Redmine::ControllerTest
   include ActiveJob::TestHelper
@@ -16,47 +16,47 @@ class RedmineSemanticSearchControllerTest < Redmine::ControllerTest
   def test_index
     get :index
     assert_response :success
-    assert_select 'h2', 'Semantic Search'
-    assert_select 'form#redmine-semantic-search-form'
+    assert_select "h2", "Semantic Search"
+    assert_select "form#redmine-semantic-search-form"
   end
 
   def test_index_with_query
     search_results = [
       {
-        'issue_id' => 1,
-        'subject' => 'Test issue',
-        'project_name' => 'eCookbook',
-        'tracker_name' => 'Bug',
-        'status_name' => 'New',
-        'priority_name' => 'Normal',
-        'author_name' => 'Admin',
-        'assigned_to_name' => 'John Smith',
-        'created_on' => Time.now.to_s,
-        'updated_on' => Time.now.to_s,
-        'description' => 'Test description',
-        'similarity_score' => 0.85
+        "issue_id" => 1,
+        "subject" => "Test issue",
+        "project_name" => "eCookbook",
+        "tracker_name" => "Bug",
+        "status_name" => "New",
+        "priority_name" => "Normal",
+        "author_name" => "Admin",
+        "assigned_to_name" => "John Smith",
+        "created_on" => Time.now.to_s,
+        "updated_on" => Time.now.to_s,
+        "description" => "Test description",
+        "similarity_score" => 0.85
       }
     ]
 
-    search_service = mock('RedmineSemanticSearchService')
+    search_service = mock("RedmineSemanticSearchService")
     search_service.stubs(:search).returns(search_results)
     RedmineSemanticSearchService.stubs(:new).returns(search_service)
 
-    get :index, params: { q: 'test query' }
+    get :index, params: { q: "test query" }
     assert_response :success
 
-    assert_select '#search-results', 1, "Search results container not found"
+    assert_select "#search-results", 1, "Search results container not found"
 
-    assert_select 'dl#search-results-list', 1, "Search results list not found"
-    assert_select 'dl#search-results-list dt', 1, "No search result items found"
+    assert_select "dl#search-results-list", 1, "Search results list not found"
+    assert_select "dl#search-results-list dt", 1, "No search result items found"
   end
 
   def test_index_handles_embedding_error
-    search_service = mock('RedmineSemanticSearchService')
+    search_service = mock("RedmineSemanticSearchService")
     search_service.stubs(:search).raises(EmbeddingService::EmbeddingError.new("Test embedding error"))
     RedmineSemanticSearchService.stubs(:new).returns(search_service)
 
-    get :index, params: { q: 'test query' }
+    get :index, params: { q: "test query" }
     assert_response :success
     assert_equal "Test embedding error", flash[:error]
     assert_template layout: "base"
@@ -67,7 +67,7 @@ class RedmineSemanticSearchControllerTest < Redmine::ControllerTest
       post :sync_embeddings
     end
 
-    assert_redirected_to controller: 'issues', action: 'index'
+    assert_redirected_to controller: "issues", action: "index"
     assert_equal l(:notice_redmine_semantic_search_sync_embeddings_started, count: Issue.count), flash[:notice]
   end
 
@@ -78,7 +78,7 @@ class RedmineSemanticSearchControllerTest < Redmine::ControllerTest
       post :sync_embeddings
     end
 
-    assert_redirected_to controller: 'issues', action: 'index'
+    assert_redirected_to controller: "issues", action: "index"
     assert_equal l(:error_redmine_semantic_search_plugin_disabled), flash[:error]
   end
 
@@ -113,6 +113,6 @@ class RedmineSemanticSearchControllerTest < Redmine::ControllerTest
   def test_anonymous_cannot_access_search
     @request.session[:user_id] = nil
     get :index
-    assert_redirected_to '/login?back_url=http%3A%2F%2Ftest.host%2Fsemantic_search'
+    assert_redirected_to "/login?back_url=http%3A%2F%2Ftest.host%2Fsemantic_search"
   end
 end

@@ -1,4 +1,4 @@
-require File.expand_path('../../test_helper', __FILE__)
+require File.expand_path("../test_helper", __dir__)
 
 class IssueCreationWithEmbeddingTest < Redmine::IntegrationTest
   include ActiveJob::TestHelper
@@ -32,7 +32,7 @@ class IssueCreationWithEmbeddingTest < Redmine::IntegrationTest
       IssueEmbeddingJob.perform_later(issue_id)
     end
 
-    log_user(@user.login, 'jsmith')
+    log_user(@user.login, "jsmith")
 
     get "/projects/#{@project.identifier}/issues/new"
     assert_response :success
@@ -40,8 +40,8 @@ class IssueCreationWithEmbeddingTest < Redmine::IntegrationTest
     post "/projects/#{@project.identifier}/issues", params: {
       issue: {
         tracker_id: @tracker.id,
-        subject: 'Test issue with embedding',
-        description: 'This is a test issue to verify embedding generation',
+        subject: "Test issue with embedding",
+        description: "This is a test issue to verify embedding generation",
         priority_id: IssuePriority.first.id
       }
     }
@@ -50,7 +50,7 @@ class IssueCreationWithEmbeddingTest < Redmine::IntegrationTest
     follow_redirect!
     assert_response :success
 
-    issue_id = request.path.split('/').last.to_i
+    issue_id = request.path.split("/").last.to_i
 
     assert_enqueued_with(job: IssueEmbeddingJob, args: [issue_id])
   end
@@ -65,13 +65,13 @@ class IssueCreationWithEmbeddingTest < Redmine::IntegrationTest
     end
 
     RedmineSemanticSearch::IssueHooks.instance.singleton_class.class_eval do
-      define_method(:schedule_embedding_job) { |issue_id| nil }
+      define_method(:schedule_embedding_job) { |_issue_id| nil }
     end
 
     perform_enqueued_jobs do
       clear_enqueued_jobs
 
-      log_user(@user.login, 'jsmith')
+      log_user(@user.login, "jsmith")
 
       get "/projects/#{@project.identifier}/issues/new"
       assert_response :success
@@ -79,8 +79,8 @@ class IssueCreationWithEmbeddingTest < Redmine::IntegrationTest
       post "/projects/#{@project.identifier}/issues", params: {
         issue: {
           tracker_id: @tracker.id,
-          subject: 'Test issue without embedding',
-          description: 'This is a test issue when plugin is disabled',
+          subject: "Test issue without embedding",
+          description: "This is a test issue when plugin is disabled",
           priority_id: IssuePriority.first.id
         }
       }

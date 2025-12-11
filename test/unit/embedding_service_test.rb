@@ -1,23 +1,23 @@
-require File.expand_path('../../test_helper', __FILE__)
+require File.expand_path("../test_helper", __dir__)
 
 class EmbeddingServiceTest < ActiveSupport::TestCase
   fixtures :issues, :journals, :time_entries
 
   def setup
-    ENV['OPENAI_API_KEY'] = 'test_api_key'
+    ENV["OPENAI_API_KEY"] = "test_api_key"
 
-    @mock_client = mock('OpenAI::Client')
+    @mock_client = mock("OpenAI::Client")
     OpenAI::Client.stubs(:new).returns(@mock_client)
 
     @service = EmbeddingService.new
   end
 
   def teardown
-    ENV.delete('OPENAI_API_KEY')
+    ENV.delete("OPENAI_API_KEY")
   end
 
   def test_initialize_raises_error_without_api_key
-    ENV.delete('OPENAI_API_KEY')
+    ENV.delete("OPENAI_API_KEY")
     assert_raises(EmbeddingService::EmbeddingError) do
       EmbeddingService.new
     end
@@ -81,8 +81,8 @@ class EmbeddingServiceTest < ActiveSupport::TestCase
     issue = Issue.find(1)
 
     issue.update_columns(
-      subject: 'Test subject',
-      description: 'Test description'
+      subject: "Test subject",
+      description: "Test description"
     )
 
     Journal.where(journalized: issue).delete_all
@@ -166,7 +166,7 @@ class EmbeddingServiceTest < ActiveSupport::TestCase
   end
 
   def test_prepare_issue_content_with_minimal_data
-    issue = Issue.new(id: 123, subject: 'Minimal Subject')
+    issue = Issue.new(id: 123, subject: "Minimal Subject")
     issue.description = nil
     issue.stubs(:journals).returns([])
     issue.stubs(:time_entries).returns([])
@@ -178,11 +178,11 @@ class EmbeddingServiceTest < ActiveSupport::TestCase
   def test_prepare_issue_content_with_empty_and_nil_journal_notes
     issue = Issue.find(1)
     issue.journals.destroy_all
-    issue.update_columns(subject: 'Journal Test', description: 'Journal test desc')
+    issue.update_columns(subject: "Journal Test", description: "Journal test desc")
 
     Journal.create!(journalized: issue, user_id: 2, notes: nil)
-    Journal.create!(journalized: issue, user_id: 2, notes: '')
-    Journal.create!(journalized: issue, user_id: 2, notes: 'Actual comment')
+    Journal.create!(journalized: issue, user_id: 2, notes: "")
+    Journal.create!(journalized: issue, user_id: 2, notes: "Actual comment")
 
     issue.reload
     issue.stubs(:time_entries).returns([])
@@ -191,18 +191,21 @@ class EmbeddingServiceTest < ActiveSupport::TestCase
     assert_includes content, "Issue ##{issue.id} - Journal Test"
     assert_includes content, "Description: Journal test desc"
     assert_includes content, "Comment: Actual comment"
-    assert_equal 1, content.scan(/Comment:/).count
+    assert_equal 1, content.scan("Comment:").count
     assert_equal 3, content.lines.count
   end
 
   def test_prepare_issue_content_with_empty_and_nil_time_entry_comments
     issue = Issue.find(1)
     issue.time_entries.destroy_all
-    issue.update_columns(subject: 'Time Entry Test', description: 'Time entry test desc')
+    issue.update_columns(subject: "Time Entry Test", description: "Time entry test desc")
 
-    TimeEntry.create!(project_id: issue.project_id, user_id: 2, issue_id: issue.id, hours: 1, activity_id: 9, spent_on: Date.today, comments: nil)
-    TimeEntry.create!(project_id: issue.project_id, user_id: 2, issue_id: issue.id, hours: 1, activity_id: 9, spent_on: Date.today, comments: '')
-    TimeEntry.create!(project_id: issue.project_id, user_id: 2, issue_id: issue.id, hours: 1, activity_id: 9, spent_on: Date.today, comments: 'Actual time entry')
+    TimeEntry.create!(project_id: issue.project_id, user_id: 2, issue_id: issue.id, hours: 1, activity_id: 9,
+                      spent_on: Date.today, comments: nil)
+    TimeEntry.create!(project_id: issue.project_id, user_id: 2, issue_id: issue.id, hours: 1, activity_id: 9,
+                      spent_on: Date.today, comments: "")
+    TimeEntry.create!(project_id: issue.project_id, user_id: 2, issue_id: issue.id, hours: 1, activity_id: 9,
+                      spent_on: Date.today, comments: "Actual time entry")
 
     issue.reload
     issue.stubs(:journals).returns([])
@@ -211,7 +214,7 @@ class EmbeddingServiceTest < ActiveSupport::TestCase
     assert_includes content, "Issue ##{issue.id} - Time Entry Test"
     assert_includes content, "Description: Time entry test desc"
     assert_includes content, "Time entry note: Actual time entry"
-    assert_equal 1, content.scan(/Time entry note:/).count
+    assert_equal 1, content.scan("Time entry note:").count
     assert_equal 4, content.lines.count
   end
 
@@ -220,7 +223,8 @@ class EmbeddingServiceTest < ActiveSupport::TestCase
     custom_url = "http://localhost:8080/v1"
     Setting.plugin_redmine_semantic_search = { "base_url" => custom_url }
 
-    OpenAI::Client.expects(:new).with(access_token: 'test_api_key', uri_base: custom_url).returns(mock('OpenAI::Client'))
+    OpenAI::Client.expects(:new).with(access_token: "test_api_key",
+                                      uri_base: custom_url).returns(mock("OpenAI::Client"))
     service = EmbeddingService.new
     assert_not_nil service, "Service should be initialized"
   ensure
@@ -234,7 +238,8 @@ class EmbeddingServiceTest < ActiveSupport::TestCase
     Setting.plugin_redmine_semantic_search = {}
     default_url = "https://api.openai.com/v1"
 
-    OpenAI::Client.expects(:new).with(access_token: 'test_api_key', uri_base: default_url).returns(mock('OpenAI::Client'))
+    OpenAI::Client.expects(:new).with(access_token: "test_api_key",
+                                      uri_base: default_url).returns(mock("OpenAI::Client"))
     service = EmbeddingService.new
     assert_not_nil service, "Service should be initialized"
   ensure
@@ -248,7 +253,8 @@ class EmbeddingServiceTest < ActiveSupport::TestCase
     Setting.plugin_redmine_semantic_search = nil
     default_url = "https://api.openai.com/v1"
 
-    OpenAI::Client.expects(:new).with(access_token: 'test_api_key', uri_base: default_url).returns(mock('OpenAI::Client'))
+    OpenAI::Client.expects(:new).with(access_token: "test_api_key",
+                                      uri_base: default_url).returns(mock("OpenAI::Client"))
     service = EmbeddingService.new
     assert_not_nil service, "Service should be initialized"
   ensure
