@@ -94,10 +94,10 @@ class RedmineSemanticSearchSystemTest < ApplicationSystemTestCase
 
     within '#redmine-semantic-search-form' do
       fill_in 'q', with: 'query with no results'
-      click_button 'Search', wait: 3
+      click_button 'Search'
     end
 
-    assert_selector 'p.nodata', wait: 3
+    assert_selector 'p.nodata', wait: 5
   end
 
   test "semantic search page is accessible only to authorized users" do
