@@ -1,8 +1,8 @@
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400] do |driver_options|
-    driver_options.add_argument 'no-sandbox'
-    driver_options.add_argument 'disable-dev-shm-usage'
-    driver_options.add_argument 'disable-gpu'
+    driver_options.add_argument "no-sandbox"
+    driver_options.add_argument "disable-dev-shm-usage"
+    driver_options.add_argument "disable-gpu"
   end
 
   include LoginHelpers::System
@@ -12,17 +12,17 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   end
 
   def log_user(login, password)
-    visit '/login'
-    fill_in 'username', with: login
-    fill_in 'password', with: password
-    click_button 'Login', wait: 5
-    assert_selector '#loggedas', wait: 5
+    visit "/login"
+    fill_in "username", with: login
+    fill_in "password", with: password
+    click_button "Login", wait: 5
+    assert_selector "#loggedas", wait: 5
   end
 
   def logout
-    if has_link?(class: 'logout')
-      click_link(class: 'logout', wait: 5)
+    if has_link?(class: "logout")
+      click_link(class: "logout", wait: 5)
     end
-    assert_no_selector '#loggedas', wait: 5
+    assert_no_selector "#loggedas", wait: 5
   end
 end

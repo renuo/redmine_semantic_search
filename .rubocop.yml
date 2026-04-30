@@ -1,17 +1,19 @@
 AllCops:
-  NewCops: enable
   TargetRubyVersion: 3.2
-  Include:
-    - "app/**/*.rb"
-    - "Gemfile"
+  NewCops: enable
   Exclude:
     - "db/**/*"
     - "bin/**/*"
     - "config/**/*"
     - "script/**/*"
-    - "test/**/*"
     - "vendor/**/*"
-    - "lib/**/*"
+
+Metrics:
+  Enabled: false
+
+Naming/VariableNumber:
+  CheckMethodNames: false
+  CheckSymbols: false
 
 Style/Documentation:
   Enabled: false
@@ -22,12 +24,6 @@ Style/FrozenStringLiteralComment:
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
-Metrics/MethodLength:
-  Max: 20
-
-Metrics/AbcSize:
-  Max: 25
-
 Style/SymbolArray:
   EnforcedStyle: brackets
 
@@ -35,6 +31,9 @@ Style/GuardClause:
   Enabled: false
 
 Style/IfUnlessModifier:
+  Enabled: false
+
+Style/TrailingCommaInHashLiteral:
   Enabled: false
 
 Style/Proc:

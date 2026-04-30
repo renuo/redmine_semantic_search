@@ -1,7 +1,8 @@
-require File.expand_path('../../test_helper', __FILE__)
+require File.expand_path("../test_helper", __dir__)
 
 class RedmineSemanticSearchTest < Redmine::IntegrationTest
   include LoginHelpers::Integration
+
   fixtures :projects, :users, :roles, :members, :member_roles, :issues, :trackers
 
   def setup
@@ -9,24 +10,24 @@ class RedmineSemanticSearchTest < Redmine::IntegrationTest
     @role = Role.find(1)
     @role.add_permission!(:use_semantic_search)
 
-    ENV['OPENAI_API_KEY'] = 'test_api_key'
+    ENV["OPENAI_API_KEY"] = "test_api_key"
 
     @issue = Issue.find(1)
     @embedding = IssueEmbedding.create!(
       issue: @issue,
       embedding_vector: [0.1] * 2000,
-      content_hash: 'test_hash',
-      model_used: 'text-embedding-ada-002'
+      content_hash: "test_hash",
+      model_used: "text-embedding-ada-002"
     )
 
     @mock_results = [
       {
-        'issue_id' => @issue.id,
-        'subject' => @issue.subject,
-        'project_name' => @issue.project.name,
-        'tracker_name' => @issue.tracker.name,
-        'updated_on' => @issue.updated_on.to_s,
-        'distance' => 0.25
+        "issue_id" => @issue.id,
+        "subject" => @issue.subject,
+        "project_name" => @issue.project.name,
+        "tracker_name" => @issue.tracker.name,
+        "updated_on" => @issue.updated_on.to_s,
+        "distance" => 0.25
       }
     ]
     RedmineSemanticSearchService.any_instance.stubs(:search).returns(@mock_results)
@@ -37,35 +38,35 @@ class RedmineSemanticSearchTest < Redmine::IntegrationTest
   end
 
   def teardown
-    ENV.delete('OPENAI_API_KEY')
+    ENV.delete("OPENAI_API_KEY")
     RedmineSemanticSearchController.any_instance.unstub(:check_if_enabled)
   end
 
   def test_semantic_search_happy_path
-    log_user(@user.login, 'jsmith')
+    log_user(@user.login, "jsmith")
 
-    get '/semantic_search'
+    get "/semantic_search"
     assert_response :success
-    assert_select 'h2', 'Semantic Search'
+    assert_select "h2", "Semantic Search"
 
-    get '/semantic_search', params: { q: 'test query' }
+    get "/semantic_search", params: { q: "test query" }
     assert_response :success
 
-    assert_select 'dl#search-results-list dt', 1
-    assert_select 'dl#search-results-list dt a.issue-link', text: "Issue ##{@issue.id}: #{@issue.subject}"
+    assert_select "dl#search-results-list dt", 1
+    assert_select "dl#search-results-list dt a.issue-link", text: "Issue ##{@issue.id}: #{@issue.subject}"
   end
 
   def test_semantic_search_requires_login
-    get '/semantic_search'
-    assert_redirected_to '/login?back_url=http%3A%2F%2Fwww.example.com%2Fsemantic_search'
+    get "/semantic_search"
+    assert_redirected_to "/login?back_url=http%3A%2F%2Fwww.example.com%2Fsemantic_search"
   end
 
   def test_semantic_search_requires_permission
     @role.remove_permission!(:use_semantic_search)
 
-    log_user(@user.login, 'jsmith')
+    log_user(@user.login, "jsmith")
 
-    get '/semantic_search'
+    get "/semantic_search"
     assert_response :forbidden
   end
 end

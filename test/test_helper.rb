@@ -1,21 +1,21 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../../test/test_helper')
+require File.expand_path("#{File.dirname(__FILE__)}/../../../test/test_helper")
 
-require 'mocha/minitest'
+require "mocha/minitest"
 
-require 'simplecov'
+require "simplecov"
 
 SimpleCov.start do
-  add_filter 'test'
-  add_filter 'plugins/redmine_semantic_search/init.rb'
-  add_filter 'plugins/redmine_semantic_search/lib/redmine_semantic_search/'
-  add_filter 'plugins/redmine_semantic_search/db/migrate/'
-  add_filter 'plugins/redmine_semantic_search/config/'
+  add_filter "test"
+  add_filter "plugins/redmine_semantic_search/init.rb"
+  add_filter "plugins/redmine_semantic_search/lib/redmine_semantic_search/"
+  add_filter "plugins/redmine_semantic_search/db/migrate/"
+  add_filter "plugins/redmine_semantic_search/config/"
   enable_coverage :branch
   minimum_coverage line: 100, branch: 100
   add_filter do |source_file|
-    !source_file.filename.include?('plugins/redmine_semantic_search')
+    !source_file.filename.include?("plugins/redmine_semantic_search")
   end
-  track_files 'plugins/redmine_semantic_search/**/*.rb'
+  track_files "plugins/redmine_semantic_search/**/*.rb"
 end
 
 ActiveJob::Base.queue_adapter = :test
@@ -23,9 +23,7 @@ ActiveJob::Base.queue_adapter = :test
 ActiveSupport.to_time_preserves_timezone = true
 
 class EmbeddingServiceMock
-  def initialize; end
-
-  def generate_embedding(text)
+  def generate_embedding(_text)
     Array.new(2000) { 0.1 }
   end
 
@@ -47,13 +45,13 @@ end
 module LoginHelpers
   module Integration
     def log_user(login, password)
-      get '/login'
+      get "/login"
       assert_response :success
-      post '/login', params: {
+      post "/login", params: {
         username: login,
         password: password
       }
-      assert_redirected_to '/my/page'
+      assert_redirected_to "/my/page"
       follow_redirect!
       assert_equal login, User.find(session[:user_id]).login
     end
@@ -61,18 +59,18 @@ module LoginHelpers
 
   module System
     def log_user(login, password)
-      visit '/login'
-      fill_in 'username', with: login
-      fill_in 'password', with: password
-      click_button 'Login', wait: 5
-      assert_selector '#loggedas', wait: 5
+      visit "/login"
+      fill_in "username", with: login
+      fill_in "password", with: password
+      click_button "Login", wait: 5
+      assert_selector "#loggedas", wait: 5
     end
 
     def logout
-      if has_link?(class: 'logout')
-        click_link(class: 'logout', wait: 5)
+      if has_link?(class: "logout")
+        click_link(class: "logout", wait: 5)
       end
-      assert_no_selector '#loggedas', wait: 5
+      assert_no_selector "#loggedas", wait: 5
     end
   end
 end

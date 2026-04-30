@@ -1,7 +1,8 @@
-require File.expand_path('../../test_helper', __FILE__)
+require File.expand_path("../test_helper", __dir__)
 
 class SyncEmbeddingsJobTest < ActiveSupport::TestCase
   include ActiveJob::TestHelper
+
   fixtures :projects, :users, :issues
 
   def setup
@@ -13,8 +14,7 @@ class SyncEmbeddingsJobTest < ActiveSupport::TestCase
   def test_job_schedules_issue_jobs_when_enabled
     Setting.plugin_redmine_semantic_search = { "enabled" => "1" }
 
-    job = SyncEmbeddingsJob.new
-    job.perform
+    SyncEmbeddingsJob.new.perform
 
     assert_equal Issue.count, enqueued_jobs.size
 
@@ -28,8 +28,7 @@ class SyncEmbeddingsJobTest < ActiveSupport::TestCase
   def test_job_does_nothing_when_disabled
     Setting.plugin_redmine_semantic_search = { "enabled" => "0" }
 
-    job = SyncEmbeddingsJob.new
-    job.perform
+    SyncEmbeddingsJob.new.perform
 
     assert_equal 0, enqueued_jobs.size
   end
