@@ -90,14 +90,9 @@ class RedmineSemanticSearchSystemTest < ApplicationSystemTestCase
     RedmineSemanticSearchService.any_instance.unstub(:search)
     RedmineSemanticSearchService.any_instance.stubs(:search).returns([])
 
-    visit "/semantic_search"
+    visit "/semantic_search?q=query+with+no+results"
 
-    within "#redmine-semantic-search-form" do
-      fill_in "q", with: "query with no results"
-      click_button "Search"
-    end
-
-    assert_selector "p.nodata", wait: 5
+    assert_selector "#search-results p.nodata", wait: 5
   end
 
   test "semantic search page is accessible only to authorized users" do
