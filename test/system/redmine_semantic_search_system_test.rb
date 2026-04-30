@@ -73,9 +73,12 @@ class RedmineSemanticSearchSystemTest < ApplicationSystemTestCase
     visit "/semantic_search?q=test+query+about+bug+issues"
 
     assert_selector "dl#search-results-list", wait: 5
+
     assert_selector "dt a[href='/issues/#{@issue.id}']"
 
-    visit "/issues/#{@issue.id}"
+    page.evaluate_script("window.location.href = '/issues/#{@issue.id}'")
+
+    sleep 1
 
     assert_current_path(%r{/issues/#{@issue.id}}, url: true)
   end
