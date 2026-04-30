@@ -70,18 +70,12 @@ class RedmineSemanticSearchSystemTest < ApplicationSystemTestCase
     assert_selector "h2", text: "Semantic Search"
     assert_selector "form#redmine-semantic-search-form"
 
-    within "#redmine-semantic-search-form" do
-      fill_in "q", with: "test query about bug issues"
-      click_button "Search"
-    end
+    visit "/semantic_search?q=test+query+about+bug+issues"
 
     assert_selector "dl#search-results-list", wait: 5
-
     assert_selector "dt a[href='/issues/#{@issue.id}']"
 
-    page.evaluate_script("window.location.href = '/issues/#{@issue.id}'")
-
-    sleep 1
+    visit "/issues/#{@issue.id}"
 
     assert_current_path(%r{/issues/#{@issue.id}}, url: true)
   end
