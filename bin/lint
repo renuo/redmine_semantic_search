@@ -5,8 +5,11 @@
 
 set -e
 
+echo "Installing Rubocop..."
+gem install 'rubocop:~> 1.76.0' 'rubocop-rails:~> 2.32.0' 'rubocop-performance:~> 1.25.0'
+
 echo "Running Rubocop linter..."
-bundle exec rubocop --ignore-parent-exclusion --force-exclusion $@
+rubocop --ignore-parent-exclusion --force-exclusion $@
 
 exit_code=$?
 
