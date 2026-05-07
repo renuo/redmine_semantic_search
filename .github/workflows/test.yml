@@ -14,9 +14,8 @@ jobs:
     env:
       RAILS_ENV: test
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      PGHOST: localhost
-      PGUSER: postgres
       PGPASSWORD: postgres
+      DATABASE_URL: postgresql://postgres:postgres@localhost/redmine_test
       REDMINE_VERSION: ${{ matrix.redmine_version }}
 
     services:
@@ -34,35 +33,12 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Cache Redmine
-        id: cache-redmine
-        uses: actions/cache@v3
-        with:
-          path: redmine
-          key: redmine-${{ matrix.redmine_version }}-${{ github.sha }}
-
       - name: Checkout redmine repository
-        if: steps.cache-redmine.outputs.cache-hit != 'true'
         uses: actions/checkout@v4
         with:
           repository: redmine/redmine
           path: redmine
           ref: ${{ matrix.redmine_version }}
-
-      - name: Clean plugin directory before checkout
-        working-directory: redmine
-        run: |
-          echo "Cleaning plugin directories..."
-          if [ -d "plugins" ]; then
-            echo "Removing plugins/semantic_search..."
-            rm -rf plugins/semantic_search
-            echo "Removing plugins/redmine_semantic_search..."
-            rm -rf plugins/redmine_semantic_search
-          else
-            echo "Plugins directory does not exist, creating for plugin checkout..."
-            mkdir -p plugins
-          fi
-          echo "Plugin directory cleaning complete."
 
       - name: Checkout plugin
         uses: actions/checkout@v4
@@ -70,64 +46,27 @@ jobs:
           path: redmine/plugins/redmine_semantic_search
           ref: ${{ github.head_ref || github.ref_name }}
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.2"
-          working-directory: redmine
+      - name: Use plugin .ruby-version
+        working-directory: redmine
+        run: ln -s plugins/redmine_semantic_search/.ruby-version
 
       - name: Configure database
         working-directory: redmine
-        run: |
-          cat <<'EOF' > config/database.yml
-          production:
-            adapter: postgresql
-            database: redmine
-            host: localhost
-            username: postgres
-            password: "postgres"
-            encoding: unicode
+        run: cp plugins/redmine_semantic_search/config/database.yml.example config/database.yml
 
-          development:
-            adapter: postgresql
-            database: redmine_development
-            host: localhost
-            username: postgres
-            password: "postgres"
-            encoding: unicode
-
-          test:
-            adapter: postgresql
-            database: redmine_test
-            host: localhost
-            username: postgres
-            password: "postgres"
-            encoding: unicode
-          EOF
-
-      - name: Install dependencies
-        working-directory: redmine
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libpq-dev libxss1 libappindicator3-1 libindicator7
-          bundle install --verbose
-          echo "--- Installed pg gems ---"
-          bundle exec gem list pg
-          echo "--- Bundle platform ---"
-          bundle platform
-          echo "-----------------------"
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          working-directory: redmine
+          bundler-cache: true
 
       - name: Setup database
         working-directory: redmine
         run: |
-          RAILS_ENV=test bundle exec rake db:create
-          RAILS_ENV=test bundle exec rake db:migrate
-          RAILS_ENV=test bundle exec rake redmine:load_default_data REDMINE_LANG=en
-          RAILS_ENV=test bundle exec rake redmine:plugins:migrate
-
-      - name: Enable pgvector extension
-        run: |
-          PGPASSWORD=postgres psql -h localhost -U postgres -d redmine_test -c "CREATE EXTENSION IF NOT EXISTS vector;"
+          bundle exec rake db:create
+          bundle exec rake db:migrate
+          bundle exec rake redmine:load_default_data REDMINE_LANG=en
+          bundle exec rake redmine:plugins:migrate
 
       - name: Run tests
         working-directory: redmine
