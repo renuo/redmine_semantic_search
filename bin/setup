@@ -44,10 +44,9 @@ bundle exec rake db:create db:migrate db:seed redmine:load_default_data REDMINE_
 bundle exec rake redmine:plugins:migrate
 
 RAKE_TASK="redmine_semantic_search:setup_dev_data"
-RAILS_ENV="${RAILS_ENV:-development}"
 
-echo "Running Rake task '${RAKE_TASK}' in RAILS_ENV=${RAILS_ENV}..."
+echo "Running Rake task '${RAKE_TASK}'..."
 
-DISABLE_SPRING=1 bundle exec rake "${RAKE_TASK}" RAILS_ENV="${RAILS_ENV}"
+DISABLE_SPRING=1 bundle exec rake "${RAKE_TASK}"
 
 echo "Setup complete. '${RAKE_TASK}' has been executed."
