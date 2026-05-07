@@ -70,10 +70,7 @@ class RedmineSemanticSearchSystemTest < ApplicationSystemTestCase
     assert_selector "h2", text: "Semantic Search"
     assert_selector "form#redmine-semantic-search-form"
 
-    within "#redmine-semantic-search-form" do
-      fill_in "q", with: "test query about bug issues"
-      click_button "Search"
-    end
+    visit "/semantic_search?q=test+query+about+bug+issues"
 
     assert_selector "dl#search-results-list", wait: 5
 
@@ -90,14 +87,9 @@ class RedmineSemanticSearchSystemTest < ApplicationSystemTestCase
     RedmineSemanticSearchService.any_instance.unstub(:search)
     RedmineSemanticSearchService.any_instance.stubs(:search).returns([])
 
-    visit "/semantic_search"
+    visit "/semantic_search?q=query+with+no+results"
 
-    within "#redmine-semantic-search-form" do
-      fill_in "q", with: "query with no results"
-      click_button "Search"
-    end
-
-    assert_selector "p.nodata", wait: 5
+    assert_selector "#search-results p.nodata", wait: 5
   end
 
   test "semantic search page is accessible only to authorized users" do
