@@ -36,7 +36,7 @@ After the plugin's dependencies are installed, navigate back to your Redmine roo
 
 ```bash
 cd ../..
-RAILS_ENV=production bundle exec rake redmine:plugins:migrate NAME=redmine_semantic_search
+bundle exec rake redmine:plugins:migrate NAME=redmine_semantic_search
 ```
 
 Finally, restart your Redmine application server for the plugin to be loaded and active.
@@ -45,7 +45,7 @@ If you are running the standard Rails development server, you can typically stop
 ```bash
 # Stop your current server (e.g., Ctrl+C)
 # Then restart it, for example:
-RAILS_ENV=production bundle exec rails server
+bundle exec rails server
 ```
 
 > [!IMPORTANT]
@@ -87,7 +87,7 @@ Ollama allows you to run large language models locally. This is a great option f
     Then, ensure your Redmine server loads this `.env` file (e.g., by using a gem like `dotenv-rails`).
     Alternatively, you can set this in your shell profile (e.g., `.zshrc`, `.bashrc`) or when starting your Redmine server:
     ```bash
-    OPENAI_API_KEY=ollama RAILS_ENV=production bundle exec rails server
+    OPENAI_API_KEY=ollama bundle exec rails server
     ```
 
 ### Option 2: Using OpenAI
@@ -143,9 +143,8 @@ To quickly populate your Redmine instance with sample projects and issues for te
     ```
 
 3.  **Run the setup script:**
-    You must specify the `RAILS_ENV` (it defaults to `development`). Next, run this command:
     ```bash
-    RAILS_ENV=production ./bin/setup
+    ./bin/setup
     ```
 
     The script will output its progress, indicating the creation of projects and issues. The output will be colorized for better readability.
@@ -217,7 +216,6 @@ bundle install
 > If you already have a database called `redmine`, make sure to delete it first using `dropdb -U postgres redmine`.
 
 ```bash
-export RAILS_ENV=production
 bundle exec rake generate_secret_token
 bundle exec rake db:create
 bundle exec rake db:migrate
@@ -227,7 +225,7 @@ bundle exec rake redmine:load_default_data
 7. Then, run the development server.
 
 ```bash
-RAILS_ENV=production bundle exec rails server
+bundle exec rails server
 ```
 
 8. Visit `http://localhost:3000` in your browser, and enter `admin` as the login and `admin` as the password.
