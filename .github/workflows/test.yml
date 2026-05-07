@@ -33,35 +33,12 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Cache Redmine
-        id: cache-redmine
-        uses: actions/cache@v3
-        with:
-          path: redmine
-          key: redmine-${{ matrix.redmine_version }}-${{ github.sha }}
-
       - name: Checkout redmine repository
-        if: steps.cache-redmine.outputs.cache-hit != 'true'
         uses: actions/checkout@v4
         with:
           repository: redmine/redmine
           path: redmine
           ref: ${{ matrix.redmine_version }}
-
-      - name: Clean plugin directory before checkout
-        working-directory: redmine
-        run: |
-          echo "Cleaning plugin directories..."
-          if [ -d "plugins" ]; then
-            echo "Removing plugins/semantic_search..."
-            rm -rf plugins/semantic_search
-            echo "Removing plugins/redmine_semantic_search..."
-            rm -rf plugins/redmine_semantic_search
-          else
-            echo "Plugins directory does not exist, creating for plugin checkout..."
-            mkdir -p plugins
-          fi
-          echo "Plugin directory cleaning complete."
 
       - name: Checkout plugin
         uses: actions/checkout@v4
