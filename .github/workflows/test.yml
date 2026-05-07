@@ -14,9 +14,8 @@ jobs:
     env:
       RAILS_ENV: test
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      PGHOST: localhost
-      PGUSER: postgres
       PGPASSWORD: postgres
+      DATABASE_URL: postgresql://postgres:postgres@localhost/redmine_test
       REDMINE_VERSION: ${{ matrix.redmine_version }}
 
     services:
@@ -80,40 +79,15 @@ jobs:
         working-directory: redmine
         run: ln -s plugins/redmine_semantic_search/.ruby-version
 
+      - name: Configure database
+        working-directory: redmine
+        run: cp plugins/redmine_semantic_search/config/database.yml.example config/database.yml
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           working-directory: redmine
           bundler-cache: true
-
-      - name: Configure database
-        working-directory: redmine
-        run: |
-          cat <<'EOF' > config/database.yml
-          production:
-            adapter: postgresql
-            database: redmine
-            host: localhost
-            username: postgres
-            password: "postgres"
-            encoding: unicode
-
-          development:
-            adapter: postgresql
-            database: redmine_development
-            host: localhost
-            username: postgres
-            password: "postgres"
-            encoding: unicode
-
-          test:
-            adapter: postgresql
-            database: redmine_test
-            host: localhost
-            username: postgres
-            password: "postgres"
-            encoding: unicode
-          EOF
 
       - name: Setup database
         working-directory: redmine
