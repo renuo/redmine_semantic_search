@@ -69,12 +69,6 @@ jobs:
           path: redmine/plugins/redmine_semantic_search
           ref: ${{ github.head_ref || github.ref_name }}
 
-      - name: Install system dependencies
-        working-directory: redmine
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libpq-dev libxss1 libappindicator3-1 libindicator7
-
       - name: Use plugin .ruby-version
         working-directory: redmine
         run: ln -s plugins/redmine_semantic_search/.ruby-version
