@@ -68,10 +68,6 @@ jobs:
           bundle exec rake redmine:load_default_data REDMINE_LANG=en
           bundle exec rake redmine:plugins:migrate
 
-      - name: Enable pgvector extension
-        run: |
-          PGPASSWORD=postgres psql -h localhost -U postgres -d redmine_test -c "CREATE EXTENSION IF NOT EXISTS vector;"
-
       - name: Run tests
         working-directory: redmine
         run: |
