@@ -70,11 +70,21 @@ jobs:
           path: redmine/plugins/redmine_semantic_search
           ref: ${{ github.head_ref || github.ref_name }}
 
+      - name: Install system dependencies
+        working-directory: redmine
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev libxss1 libappindicator3-1 libindicator7
+
+      - name: Use plugin .ruby-version
+        working-directory: redmine
+        run: ln -s plugins/redmine_semantic_search/.ruby-version
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.2"
           working-directory: redmine
+          bundler-cache: true
 
       - name: Configure database
         working-directory: redmine
@@ -104,18 +114,6 @@ jobs:
             password: "postgres"
             encoding: unicode
           EOF
-
-      - name: Install dependencies
-        working-directory: redmine
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libpq-dev libxss1 libappindicator3-1 libindicator7
-          bundle install --verbose
-          echo "--- Installed pg gems ---"
-          bundle exec gem list pg
-          echo "--- Bundle platform ---"
-          bundle platform
-          echo "-----------------------"
 
       - name: Setup database
         working-directory: redmine
