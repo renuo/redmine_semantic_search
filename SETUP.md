@@ -6,7 +6,8 @@ This Guide will give you a step-by-step Tutorial on how to set this Plugin up.
 
 Before we get started, make sure you have the following done already.
 
-✅ A valid Redmine 5.1 or 6.0 instance (see [Setting Up Redmine](#setting-up-redmine))
+✅ Ruby >= 3.3 available
+✅ A valid Redmine 6.0 or 6.1 instance (see [Setting Up Redmine](#setting-up-redmine))
 <br />
 ✅ Optional: Your OpenAI API Key. Get it [here](https://platform.openai.com/api-keys).
 
@@ -155,12 +156,12 @@ This will give you a good set of data to test the "Sync Embeddings" and semantic
 
 If you haven't set up Redmine, refer to this guide.
 
-1. Make sure you have `ruby-3.2.8` installed.
+1. Make sure you have the Ruby version mentioned in `.ruby-version`
 
 There are multiple ways to install this ruby verison, but the one I recommend is the following
 
 - Install `rbenv`, a ruby installation manager: `brew install rbenv`
-- Install `ruby` version 3.2.8 using: `rbenv install 3.2.8`
+- Install `ruby` version using: `rbenv install`
 
 2. After `ruby` is ready, clone redmine into a directory of your choice, preferrably `~`.
 
@@ -198,10 +199,10 @@ test:
 > [!TIP]
 > If you face any issues with the Postgres Database Setup, try pasting [this](repo/backup_database.yml) into `config/database.yml` instead.
 
-4. Now set the local ruby version to 3.2.8.
+4. Now set the local ruby version to 3.3.
 
 ```bash
-rbenv local 3.2.8
+rbenv local 3.3
 ```
 
 5. After that, install the dependencies with `bundle`.
