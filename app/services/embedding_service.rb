@@ -4,6 +4,7 @@ class EmbeddingService
   class EmbeddingError < StandardError; end
 
   MAX_DIMENSION = 2000
+  DEFAULT_BASE_URL = "https://api.openai.com/v1".freeze
 
   def initialize
     @client = OpenAI::Client.new(access_token: api_key, uri_base: base_url)
@@ -60,13 +61,19 @@ class EmbeddingService
 
   def api_key
     key = ENV.fetch("OPENAI_API_KEY", nil)
-    raise EmbeddingError, I18n.t("error_redmine_semantic_search_openai_api_key_required") if key.blank?
+    return key if key.present?
+    # Self-hosted, OpenAI-compatible endpoints (e.g. Ollama) need no key.
+    return nil if using_custom_base_url?
 
-    key
+    raise EmbeddingError, I18n.t("error_redmine_semantic_search_openai_api_key_required")
   end
 
   def base_url
-    Setting.plugin_redmine_semantic_search["base_url"] || "https://api.openai.com/v1"
+    @base_url ||= Setting.plugin_redmine_semantic_search["base_url"] || DEFAULT_BASE_URL
+  end
+
+  def using_custom_base_url?
+    base_url.to_s.strip.chomp("/") != DEFAULT_BASE_URL
   end
 
   def embedding_model

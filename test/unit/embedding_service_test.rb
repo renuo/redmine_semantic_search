@@ -23,6 +23,19 @@ class EmbeddingServiceTest < ActiveSupport::TestCase
     end
   end
 
+  def test_does_not_require_api_key_for_custom_base_url
+    ENV.delete("OPENAI_API_KEY")
+    original_settings = Setting.plugin_redmine_semantic_search
+    Setting.plugin_redmine_semantic_search = { "base_url" => "http://localhost:11434/v1" }
+
+    service = nil
+    assert_nothing_raised { service = EmbeddingService.new }
+    # Self-hosted, OpenAI-compatible endpoints (e.g. Ollama) need no key: none is sent.
+    assert_nil service.send(:api_key)
+  ensure
+    Setting.plugin_redmine_semantic_search = original_settings
+  end
+
   def test_generate_embedding
     mock_embedding = Array.new(2000) { rand }
     mock_response = {
