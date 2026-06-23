@@ -20,7 +20,7 @@ For the rendered Mermaid Domain Model, have a look at [this file](repo/domain_mo
 ## Requirements
 
 - PostgreSQL installed
-- Valid OpenAI API key
+- A valid OpenAI API key (only when using OpenAI, not needed for self-hosted Ollama)
 
 More information in [Setup Guide](#installation).
 

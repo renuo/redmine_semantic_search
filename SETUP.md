@@ -78,17 +78,9 @@ Ollama allows you to run large language models locally. This is a great option f
     *   **Base URL:** `http://localhost:11434/v1`
     *   **Embedding Model:** `nomic-embed-text:latest`
 
-3.  **Set API Key for Ollama:**
-    For the connection to work correctly with Ollama, the `OPENAI_API_KEY` must be set to `ollama`.
-    It's recommended to create a `.env` file in your Redmine root directory and add the following line:
-    ```env
-    OPENAI_API_KEY=ollama
-    ```
-    Then, ensure your Redmine server loads this `.env` file (e.g., by using a gem like `dotenv-rails`).
-    Alternatively, you can set this in your shell profile (e.g., `.zshrc`, `.bashrc`) or when starting your Redmine server:
-    ```bash
-    OPENAI_API_KEY=ollama bundle exec rails server
-    ```
+3.  **No API Key needed:**
+    Ollama requires no authentication, so you can leave `OPENAI_API_KEY` unset.
+    A key is only required when using OpenAI (see Option 2 below).
 
 ### Option 2: Using OpenAI
 
