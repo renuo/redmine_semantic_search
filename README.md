@@ -21,6 +21,7 @@ For the rendered Mermaid Domain Model, have a look at [this file](repo/domain_mo
 
 - PostgreSQL installed
 - A valid OpenAI API key (only when using OpenAI, not needed for self-hosted Ollama)
+- For a self-hosted endpoint behind Basic Auth, set `OLLAMA_BASIC_AUTH_USERNAME` and `OLLAMA_BASIC_AUTH_PASSWORD` (see [Setup Guide](SETUP.md))
 
 More information in [Setup Guide](#installation).
 

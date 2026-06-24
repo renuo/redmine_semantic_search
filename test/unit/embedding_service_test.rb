@@ -235,13 +235,82 @@ class EmbeddingServiceTest < ActiveSupport::TestCase
     assert_equal 4, content.lines.count
   end
 
+  def test_basic_auth_header_nil_with_only_username
+    original_settings = Setting.plugin_redmine_semantic_search
+    Setting.plugin_redmine_semantic_search = { "base_url" => "http://localhost:11434/v1" }
+    ENV["OLLAMA_BASIC_AUTH_USERNAME"] = "user"
+
+    service = EmbeddingService.new
+    assert_nil service.send(:basic_auth_header)
+  ensure
+    Setting.plugin_redmine_semantic_search = original_settings
+    ENV.delete("OLLAMA_BASIC_AUTH_USERNAME")
+  end
+
+  def test_basic_auth_header_nil_with_only_password
+    original_settings = Setting.plugin_redmine_semantic_search
+    Setting.plugin_redmine_semantic_search = { "base_url" => "http://localhost:11434/v1" }
+    ENV["OLLAMA_BASIC_AUTH_PASSWORD"] = "pass"
+
+    service = EmbeddingService.new
+    assert_nil service.send(:basic_auth_header)
+  ensure
+    Setting.plugin_redmine_semantic_search = original_settings
+    ENV.delete("OLLAMA_BASIC_AUTH_PASSWORD")
+  end
+
+  def test_basic_auth_header_nil_on_default_url
+    original_settings = Setting.plugin_redmine_semantic_search
+    Setting.plugin_redmine_semantic_search = {}
+    ENV["OLLAMA_BASIC_AUTH_USERNAME"] = "user"
+    ENV["OLLAMA_BASIC_AUTH_PASSWORD"] = "pass"
+
+    service = EmbeddingService.new
+    assert_nil service.send(:basic_auth_header)
+  ensure
+    Setting.plugin_redmine_semantic_search = original_settings
+    ENV.delete("OLLAMA_BASIC_AUTH_USERNAME")
+    ENV.delete("OLLAMA_BASIC_AUTH_PASSWORD")
+  end
+
+  def test_basic_auth_header_does_not_warn_when_both_vars_unset
+    original_settings = Setting.plugin_redmine_semantic_search
+    Setting.plugin_redmine_semantic_search = { "base_url" => "http://localhost:11434/v1" }
+
+    service = EmbeddingService.new
+    Rails.logger.expects(:warn).never
+    assert_nil service.send(:basic_auth_header)
+  ensure
+    Setting.plugin_redmine_semantic_search = original_settings
+  end
+
+  def test_initialize_passes_basic_auth_header_when_configured
+    original_settings = Setting.plugin_redmine_semantic_search
+    custom_url = "http://localhost:11434/v1"
+    Setting.plugin_redmine_semantic_search = { "base_url" => custom_url }
+    ENV["OLLAMA_BASIC_AUTH_USERNAME"] = "user"
+    ENV["OLLAMA_BASIC_AUTH_PASSWORD"] = "pass"
+
+    OpenAI::Client.expects(:new).with(
+      access_token: "test_api_key",
+      uri_base: custom_url,
+      extra_headers: { "Authorization" => "Basic dXNlcjpwYXNz" }
+    ).returns(mock("OpenAI::Client"))
+    assert_not_nil EmbeddingService.new
+  ensure
+    Setting.plugin_redmine_semantic_search = original_settings
+    ENV.delete("OLLAMA_BASIC_AUTH_USERNAME")
+    ENV.delete("OLLAMA_BASIC_AUTH_PASSWORD")
+  end
+
   def test_base_url_uses_setting_if_present
     original_settings = Setting.plugin_redmine_semantic_search
     custom_url = "http://localhost:8080/v1"
     Setting.plugin_redmine_semantic_search = { "base_url" => custom_url }
 
     OpenAI::Client.expects(:new).with(access_token: "test_api_key",
-                                      uri_base: custom_url).returns(mock("OpenAI::Client"))
+                                      uri_base: custom_url,
+                                      extra_headers: {}).returns(mock("OpenAI::Client"))
     service = EmbeddingService.new
     assert_not_nil service, "Service should be initialized"
   ensure
@@ -256,7 +325,8 @@ class EmbeddingServiceTest < ActiveSupport::TestCase
     default_url = "https://api.openai.com/v1"
 
     OpenAI::Client.expects(:new).with(access_token: "test_api_key",
-                                      uri_base: default_url).returns(mock("OpenAI::Client"))
+                                      uri_base: default_url,
+                                      extra_headers: {}).returns(mock("OpenAI::Client"))
     service = EmbeddingService.new
     assert_not_nil service, "Service should be initialized"
   ensure
@@ -271,7 +341,8 @@ class EmbeddingServiceTest < ActiveSupport::TestCase
     default_url = "https://api.openai.com/v1"
 
     OpenAI::Client.expects(:new).with(access_token: "test_api_key",
-                                      uri_base: default_url).returns(mock("OpenAI::Client"))
+                                      uri_base: default_url,
+                                      extra_headers: {}).returns(mock("OpenAI::Client"))
     service = EmbeddingService.new
     assert_not_nil service, "Service should be initialized"
   ensure
