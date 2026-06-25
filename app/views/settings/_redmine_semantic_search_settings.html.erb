@@ -23,6 +23,20 @@
       <em class="info"><%= l(:text_redmine_semantic_search_base_url_info) %></em>
     </p>
 
+    <% basic_auth_username_set = ENV['OLLAMA_BASIC_AUTH_USERNAME'].present? %>
+    <% basic_auth_password_set = ENV['OLLAMA_BASIC_AUTH_PASSWORD'].present? %>
+    <p class="settings-info">
+      <strong><%= l(:label_redmine_semantic_search_basic_auth) %></strong>
+      <em class="info"><%= l(:text_redmine_semantic_search_basic_auth_info) %></em>
+      <br>
+      <code>OLLAMA_BASIC_AUTH_USERNAME=<%= basic_auth_username_set ? l(:label_set) : l(:label_not_set) %></code>
+      <br>
+      <code>OLLAMA_BASIC_AUTH_PASSWORD=<%= basic_auth_password_set ? l(:label_set) : l(:label_not_set) %></code>
+    </p>
+    <% if basic_auth_username_set ^ basic_auth_password_set %>
+      <div class="flash warning"><%= l(:warning_redmine_semantic_search_basic_auth_incomplete) %></div>
+    <% end %>
+
     <p>
       <label for="settings_embedding_model"><%= l(:label_redmine_semantic_search_embedding_model) %></label>
       <%= select_tag 'settings[embedding_model]',
