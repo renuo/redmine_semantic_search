@@ -1,4 +1,5 @@
 require "ruby/openai"
+require "base64"
 
 class EmbeddingService
   class EmbeddingError < StandardError; end
@@ -7,7 +8,7 @@ class EmbeddingService
   DEFAULT_BASE_URL = "https://api.openai.com/v1".freeze
 
   def initialize
-    @client = OpenAI::Client.new(access_token: api_key, uri_base: base_url)
+    @client = OpenAI::Client.new(access_token: api_key, uri_base: base_url, extra_headers: extra_headers)
   end
 
   def generate_embedding(text)
@@ -74,6 +75,28 @@ class EmbeddingService
 
   def using_custom_base_url?
     base_url.to_s.strip.chomp("/") != DEFAULT_BASE_URL
+  end
+
+  def extra_headers
+    header = basic_auth_header
+    return {} if header.nil?
+
+    { "Authorization" => header }
+  end
+
+  def basic_auth_header
+    return nil unless using_custom_base_url?
+
+    username = ENV.fetch("OLLAMA_BASIC_AUTH_USERNAME", nil)
+    password = ENV.fetch("OLLAMA_BASIC_AUTH_PASSWORD", nil)
+    return nil if username.blank? && password.blank?
+
+    if username.blank? || password.blank?
+      Rails.logger.warn("Ignoring basic auth: set both OLLAMA_BASIC_AUTH_USERNAME and OLLAMA_BASIC_AUTH_PASSWORD")
+      return nil
+    end
+
+    "Basic #{Base64.strict_encode64("#{username}:#{password}")}"
   end
 
   def embedding_model

@@ -82,6 +82,16 @@ Ollama allows you to run large language models locally. This is a great option f
     Ollama requires no authentication, so you can leave `OPENAI_API_KEY` unset.
     A key is only required when using OpenAI (see Option 2 below).
 
+4.  **Protected self-hosted endpoint (optional):**
+    If your Ollama is hosted remotely with basic auth enabled,
+    provide the credentials via environment variables.
+    ```bash
+    export OLLAMA_BASIC_AUTH_USERNAME="your-username"
+    export OLLAMA_BASIC_AUTH_PASSWORD="your-password"
+    ```
+    Both must be set; if only one is present, basic auth is skipped. Leave both
+    unset for a local, unprotected Ollama.
+
 ### Option 2: Using OpenAI
 
 If you prefer to use OpenAI's models for embeddings:
