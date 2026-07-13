@@ -43,7 +43,6 @@ GEM
     connection_pool (3.0.2)
     crass (1.0.6)
     date (3.5.1)
-    docile (1.4.1)
     dotenv (3.2.0)
     dotenv-rails (3.2.0)
       dotenv (= 3.2.0)
@@ -145,12 +144,7 @@ GEM
       faraday (>= 1)
       faraday-multipart (>= 1)
     securerandom (0.4.1)
-    simplecov (0.22.0)
-      docile (~> 1.1)
-      simplecov-html (~> 0.11)
-      simplecov_json_formatter (~> 0.1)
-    simplecov-html (0.13.2)
-    simplecov_json_formatter (0.1.4)
+    simplecov (1.0.0)
     stringio (3.2.0)
     thor (1.5.0)
     timeout (0.6.1)
@@ -176,7 +170,7 @@ DEPENDENCIES
   neighbor (~> 1.0)
   rails-controller-testing
   ruby-openai (~> 8.3)
-  simplecov (~> 0.22.0)
+  simplecov (~> 1.0.0)
 
 BUNDLED WITH
    2.6.7
