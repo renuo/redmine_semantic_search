@@ -5,7 +5,7 @@ gem "ruby-openai", "~> 8.3"
 
 group :test do
   gem "rails-controller-testing"
-  gem "simplecov", "~> 0.22.0"
+  gem "simplecov", "~> 1.1.1"
 end
 
 group :development, :test do
