@@ -3,6 +3,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     driver_options.add_argument "no-sandbox"
     driver_options.add_argument "disable-dev-shm-usage"
     driver_options.add_argument "disable-gpu"
+    driver_options.add_argument "force-prefers-reduced-motion"
   end
 
   include LoginHelpers::System
